@@ -114,15 +114,6 @@ scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3,ORA_type="GO
     }
 
     # Module for compute ORA base on desired enrichment database
-    # ora <- enrichGO(genes2check, OrgDb= "org.Hs.eg.db", keyType = keytype_called,
-    #                 ont = ORA_ont, pvalueCutoff = ORA_p.adj, pAdjustMethod = "BH",
-    #                 qvalueCutoff = 1,minGSSize = ORA_minGSSize,maxGSSize = ORA_maxGGSSize)
-
-
-    # !!! OrgDb y organism hay que declararlos en la función. de lo contrario computa siempre con HUMANO!!!
-    # !!!ont=ORA_ont es solo para GO!!!
-    #ORA_type <- match.arg(ORA_type)
-
     if (ORA_type == "GO") {
       ora <- enrichGO(genes2check, OrgDb= ORA_GO_OrgDb, keyType=keytype_called,
                       ont= ORA_ont, pvalueCutoff= ORA_p.adj, pAdjustMethod= ORA_p.adj_Meth,
