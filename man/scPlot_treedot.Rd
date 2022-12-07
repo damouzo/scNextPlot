@@ -21,6 +21,9 @@ Object with multiple GSEA data from pairwise_termsim()
   \item{clust_num}{
 # of clusters into which you want to separate the dendrogram. [Default:3]
 }
+  \item{ORA_type}{
+ORA function selection ("GO", "KEGG", "DO"). [Default:"GO"]
+}
   \item{ORA_ont}{
 What ontology do you want to use? [Default:"BP"]
 }
@@ -32,6 +35,15 @@ The max. size of genes annotated by Ontology term for testing. [Default:500]
 }
   \item{ORA_p.adj}{
 P-value adjust cutoff.[Default:1]
+}
+  \item{ORA_p.adj_Meth}{
+Method for correction by multiple tests for ORA [Default:"BH"]
+}
+  \item{ORA_KEGG_Org}{
+Organism selection for the ORA performed with KEGG [Default:"hsa"]
+}
+  \item{ORA_GO_OrgDb}{
+Data base selection for the ORA performed with GO [Default:"org.Hs.eg.db"]
 }
 }
 \details{

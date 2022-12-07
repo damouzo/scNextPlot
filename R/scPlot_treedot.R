@@ -1,8 +1,10 @@
 
 
 # Plot TreeDot for GSEA comparision results -----------------------------------
-scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3, ORA_ont="BP",
-                         ORA_minGSSize=10, ORA_maxGGSSize=500, ORA_p.adj=1){
+scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3,ORA_type="GO",
+                           ORA_ont="BP", ORA_minGSSize=10, ORA_maxGGSSize=500,
+                           ORA_p.adj=1, ORA_GO_OrgDb= "org.Hs.eg.db",
+                           ORA_p.adj_Meth="BH", ORA_KEGG_Org='hsa'){
   # libraries
   library(ggplot2)
   library(tidyverse)
@@ -100,10 +102,8 @@ scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3, ORA_ont="BP
   keywords <- vector()
   for (i in 1:clust_num) {
     paths_of_clust <- clus[clus == i]
-
     cluster_paths_info <- comp_pair_term_fort[comp_pair_term_fort$Description %in% names(paths_of_clust) ,]
     genes2check <-  unique(unlist(str_split(cluster_paths_info$geneID, "/")))
-
 
     if (is.null(comp_pair_term@.call$keyType) == F ){
       keytype_called <- comp_pair_term@.call$keyType
@@ -113,14 +113,38 @@ scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3, ORA_ont="BP
       keytype_called <- "ENTREZID"
     }
 
+    # Module for compute ORA base on desired enrichment database
+    # ora <- enrichGO(genes2check, OrgDb= "org.Hs.eg.db", keyType = keytype_called,
+    #                 ont = ORA_ont, pvalueCutoff = ORA_p.adj, pAdjustMethod = "BH",
+    #                 qvalueCutoff = 1,minGSSize = ORA_minGSSize,maxGSSize = ORA_maxGGSSize)
 
-    ora <- enrichGO(genes2check, OrgDb= "org.Hs.eg.db", keyType = keytype_called,
-                    ont = ORA_ont, pvalueCutoff = ORA_p.adj, pAdjustMethod = "BH",
-                    qvalueCutoff = 1,minGSSize = ORA_minGSSize,maxGSSize = ORA_maxGGSSize)
+
+    # !!! OrgDb y organism hay que declararlos en la función. de lo contrario computa siempre con HUMANO!!!
+    # !!!ont=ORA_ont es solo para GO!!!
+    #ORA_type <- match.arg(ORA_type)
+
+    if (ORA_type == "GO") {
+      ora <- enrichGO(genes2check, OrgDb= ORA_GO_OrgDb, keyType=keytype_called,
+                      ont= ORA_ont, pvalueCutoff= ORA_p.adj, pAdjustMethod= ORA_p.adj_Meth,
+                      qvalueCutoff=1, minGSSize=ORA_minGSSize,maxGSSize=ORA_maxGGSSize)
+
+    } else if (ORA_type == "KEGG") {
+      ora <- enrichKEGG(gene= genes2check, organism= ORA_KEGG_Org, pvalueCutoff=ORA_p.adj,
+                        pAdjustMethod=ORA_p.adj_Meth, qvalueCutoff=1, minGSSize=ORA_minGSSize,
+                        maxGSSize = ORA_maxGGSSize)
+
+    } else if (ORA_type == "DO") {
+      ora <- enrichDO(gene=genes2check, ont="DO", pvalueCutoff=ORA_p.adj,
+                      pAdjustMethod=ORA_p.adj_Meth, qvalueCutoff=1, minGSSize=ORA_minGSSize,
+                      maxGSSize= ORA_maxGGSSize)
+    }
 
     keywords[i] <- ora@result$Description[1]
   }
 
+  #For leyend adjust proportionaly to terms length
+  keywords_max_length =max(nchar(as.list(keywords)))
+  if (keywords_max_length < 17){keywords_max_length = 17}
 
   # Plot dendogram
   g <- split(names(clus), clus)
@@ -161,7 +185,8 @@ scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3, ORA_ont="BP
   # Merge Plot
   combine_plot <- plot_grid(ggtree_plot_noLegend,NULL, dotplot_noLegend, nrow= 1, rel_widths= c(0.3,-0.05,2), align = 'h')
   combine_legend <- plot_grid(legend_dot,NULL,legend_tree, ncol=1, rel_heights = c(1,-0.5,1))
-  big_plot <- plot_grid(combine_plot,combine_legend,NULL, nrow = 1, rel_widths = c(1,0.1, 0.16))
+  big_plot <- plot_grid(combine_plot,combine_legend,NULL, nrow = 1,
+                        rel_widths = c(1,0.1, keywords_max_length*0.0053))
   return(big_plot)
 }
 
