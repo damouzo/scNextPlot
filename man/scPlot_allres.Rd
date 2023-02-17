@@ -24,6 +24,9 @@ True for get the individual UMAP of each resolution. [Default:T]
  \item{clustreeGenes}{
 Vector of genes to check the expression in the Clustertree. [Default:NULL]
 }
+ \item{wknnGraph}{
+True for multiome findcluster with wknn graph. [Default:NULL]
+}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~

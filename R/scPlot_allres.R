@@ -1,7 +1,7 @@
 
 # Compile descriptive resolutions ----------------------------------------------
 scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1),
-                          clustree=T, UMAPs=T, clustreeGenes=NULL) {
+                          clustree=T, UMAPs=T, clustreeGenes=NULL ,wknnGraph=F) {
   # Load required libraries
   library(Seurat)
   library(clustree)
@@ -15,7 +15,14 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
 
   # Clean Res and Compute FindCluster for selected resolutions ------------------
   Seu_obj@meta.data <- Seu_obj@meta.data %>% dplyr::select(-contains("res"))
-  Seu_obj <- FindClusters(Seu_obj, resolution = res)
+
+  if (wknnGraph == T) {
+    Seu_obj <- FindClusters(Seu_obj, resolution = res, graph="wknn")
+
+  } else {
+    Seu_obj <- FindClusters(Seu_obj, resolution = res)
+  }
+
 
   #Create list of plots for disfferent resolutions -----------------------------
   col_names <- grep("res", names(Seu_obj@meta.data), value = TRUE)
