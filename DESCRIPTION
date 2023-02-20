@@ -1,9 +1,0 @@
-Package: scNextPlot
-Type: Package
-Title: Plots for SC Analysis
-Version: 0.1.0
-Author: Daniel Mouzo
-Maintainer: The package maintainer <dmouzoca@navarra.es>
-License: What license is it under?
-Encoding: UTF-8
-LazyData: true
