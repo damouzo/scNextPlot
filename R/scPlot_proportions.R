@@ -9,9 +9,7 @@ scPlot_proportions = function (seurat_obj, by_ident, clusters=F,
   library(reshape2)
   library(BuenColors)
 
-  seurat_obj@meta.data$Sample_Name <- vapply(strsplit(as.character(seurat_obj@meta.data$orig.ident),"_"), `[`, 3, FUN.VALUE=character(1))
-
-  count_table <- table(seurat_obj@meta.data[[by_ident]], seurat_obj@meta.data$Sample_Name)
+  count_table <- table(seurat_obj@meta.data[[by_ident]], seurat_obj@meta.data$orig.ident)
   count_mtx   <- as.data.frame.matrix(count_table)
   count_mtx$cluster <- rownames(count_mtx)
   melt_mtx    <- melt(count_mtx)
@@ -49,12 +47,17 @@ scPlot_proportions = function (seurat_obj, by_ident, clusters=F,
 
   p1 <- p1 + geom_bar(position="dodge", stat="identity",fill = "grey60") +
     theme_bw() + scale_x_log10() + xlab("Cells per ident, log10 scale") +
-    {if(PlotNcells) geom_text(aes(y=cluster,x=1.1,label=value,hjust="bottom"), size=2.5)} + ylab("")
+    {if(PlotNcells) geom_text(aes(y=cluster,x=1.1,label=value,hjust="bottom"), size=4)} + ylab("") +
+    theme(axis.title = element_text(size = 16), axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 14))
 
   p2 <- p2 + geom_bar(position="dodge", stat="identity") + theme_bw() + coord_flip() +
-    {if(PlotNcells) geom_text(aes(cluster,y = 0.1,label=value, group=Dataset, hjust =0), position=position_dodge(width=1), size=2.5)} +
+    {if(PlotNcells) geom_text(aes(cluster,y = 0.1,label=value, group=Dataset, hjust =0),
+                              position=position_dodge(width=1), size=4)} +
     scale_fill_manual(values = my_pal) +
-    ylab("Percentage of cells in each dataset") + xlab("Idents") + theme(legend.position="top")
+    ylab("Percentage of cells per ident") + xlab("Idents") +
+    theme(legend.position="top", axis.title = element_text(size = 16),
+          axis.text.x = element_text(size = 16), axis.text.y = element_text(size = 14))
 
   #Sum plots
   p2 + p1 + plot_layout(widths = c(3,1))
