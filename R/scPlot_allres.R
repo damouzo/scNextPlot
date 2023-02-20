@@ -1,6 +1,6 @@
 
 # Compile descriptive resolutions ----------------------------------------------
-scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1),
+scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9),
                           clustree=T, UMAPs=T, clustreeGenes=NULL, wknnGraph=F) {
   # Load required libraries
   library(Seurat)
