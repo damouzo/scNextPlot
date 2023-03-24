@@ -1,7 +1,8 @@
 
 # Compile descriptive resolutions ----------------------------------------------
 scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
-                          clustree=T, UMAPs=T, clustreeGenes=NULL, wknnGraph=F) {
+                          clustree=T, UMAPs=T, clustreeGenes=NULL,
+                          reduction="umap", wknnGraph=F) {
   # Load required libraries
   library(Seurat)
   library(clustree)
@@ -31,7 +32,7 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
   # Create a DimPlot for each resolution
   if (UMAPs == T){
     for (plot in names(plots)) {
-      plots[[plot]] <- DimPlot(Seu_obj, reduction = "umap", group.by = plot,
+      plots[[plot]] <- DimPlot(Seu_obj, reduction = reduction, group.by = plot,
                                label = T,cols= my_pal)
     }
   }

@@ -24,8 +24,11 @@ True for get the individual UMAP of each resolution. [Default:T]
  \item{clustreeGenes}{
 Vector of genes to check the expression in the Clustertree. [Default:NULL]
 }
+ \item{reduction}{
+Seleccion of the reduction for the DimPlot. [Default:"umap"]
+}
  \item{wknnGraph}{
-True for multiome findcluster with wknn graph. [Default:NULL]
+True for multiome findcluster with wknn graph. [Default:FALSE]
 }
 }
 \details{
