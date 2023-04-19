@@ -14,6 +14,9 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
   my_pal <- c(jdb_palette("corona"),jdb_palette("lawhoops"),
               jdb_palette("samba_color"),jdb_palette("wolfgang_basic"))
 
+  # Default assays
+  DefaultAssay(Seu_obj) <- "RNA"
+
   # Clean Res and Compute FindCluster for selected resolutions ------------------
   Seu_obj@meta.data <- Seu_obj@meta.data %>% dplyr::select(-contains("res"))
 
