@@ -10,6 +10,6 @@ scNextPlot is a GitHub package designed to facilitate data visualization, with a
 To install the GitHub package, you may find the following useful:
 ```
 library(devtools)
-install_github("damozuo/scNextPlot")
+install_github("damouzo/scNextPlot")
 ```
 
