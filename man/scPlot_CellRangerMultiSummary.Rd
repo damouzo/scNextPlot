@@ -8,8 +8,8 @@ This is a function that compiles the summary outputs from Cell Ranger and genera
 scPlot_CellRangerMultiSummary(base_path = path_counts, output_path = path_plot)
 }
 \arguments{
-  \item{base_path}{Path to folder over out/ folder of Cellranger count function.
-  \item{output_path}{Path where save the output file.
+  \item{base_path}{Path to folder over out/ folder of Cellranger count function.}
+  \item{output_path}{Path where save the output file.}
   \item{secondary_path}{If not default folder name out/ set new folder name. [Default:NULL]}
   \item{file_name}{Name of the file with stored summary. [Default:"summary.csv"]}
   \item{lib_list}{Library names to only check that library from. [Default: All Samples] }
