@@ -3,7 +3,7 @@
 # Compile cellranger outputs ---------------------------------------------------
 scPlot_CellRangerMultiSummary = function (base_path, secondary_path = "outs/",
                                           file_name="summary.csv", lib_list = NULL,
-                                          new_lib_names = NULL,
+                                          new_lib_names = NULL, add_metadata= NULL,
                                           output_path=NULL, save_html=T, save_xlsx=T) {
 
 
@@ -58,6 +58,9 @@ scPlot_CellRangerMultiSummary = function (base_path, secondary_path = "outs/",
   colnames(full_data) <- gsub("_", ".", colnames(full_data))
   full_data <- full_data[, -1] #remove doble ID column
 
+
+  # Add metadata extra
+  if (!is.null(x = add_metadata)) {full_data <- merge(full_data, add_metadata, by="Sample.ID")}
 
 
 
