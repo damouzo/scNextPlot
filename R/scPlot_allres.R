@@ -36,7 +36,7 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
   if (UMAPs == T){
     for (plot in names(plots)) {
       plots[[plot]] <- DimPlot(Seu_obj, reduction = reduction, group.by = plot,
-                               label = T,cols= my_pal)
+                               label = T,cols= my_pal,pt.size=0.5)
     }
   }
 
