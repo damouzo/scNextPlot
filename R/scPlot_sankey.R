@@ -1,6 +1,5 @@
 
 # Make a Sankey Plot From Seurat Meta.Data ################################################
-
 scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
 
   # Load Libraries -------------------------------------------------
@@ -18,16 +17,26 @@ scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
   add_suffix <- function(x, suffix) {paste0(x, "_", suffix)}
   for (col in names(data)) {data[[col]] <- add_suffix(data[[col]], col)}
 
-  link_data <- as.data.frame(table(data))
-  colnames(link_data) <- c("source", "target", "value")
-  count_table <- table(data[[steps[1]]], data[[steps[2]]])
-  adj_mat <- as.matrix(count_table)
-  nodes <- unique(c(rownames(adj_mat), colnames(adj_mat)))
+
+  # Create the df for the links in frecuency
+  link_data <- data.frame(source = character(), target = character(), value = numeric(), stringsAsFactors = FALSE)
+
+  for (i in 1:(length(steps)-1)) {
+    freq_table <- as.data.frame(table(data[, c(steps[i], steps[i+1])]))
+    names(freq_table) <- c("source", "target", "value")
+    link_data <- rbind(link_data, freq_table)
+  }
+
+
+  # Data to sankey plot
+  nodes <- unique(unlist(sapply(data, unique)))
   links <- data.frame(
     source = match(link_data$source, nodes) - 1,
     target = match(link_data$target, nodes) - 1,
     value = link_data$value
   )
+
+
 
   # Sankey Plot -----------------------------------------------------
   sankey_plot <- sankeyNetwork(
@@ -37,7 +46,7 @@ scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
     Target = "target",
     Value = "value",
     NodeID = "name",
-    fontSize=13,
+    fontSize = 13,
     sinksRight = FALSE
   )
 
@@ -47,4 +56,5 @@ scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
              file = paste0(output_path,"sankey_plot_", paste(colnames(data), collapse = "_"), ".html"))
   if (file.exists(paste0(output_path,"/foldr2remove"))) {unlink(paste0(output_path,"/foldr2remove"), recursive=TRUE)}
 }
+
 
