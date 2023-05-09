@@ -1,5 +1,7 @@
 
-# Make a Sankey Plot From Seurat Meta.Data ################################################
+
+
+# Make a Sankey Plot From Seurat Meta.Data ####################################
 scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
 
   # Load Libraries -------------------------------------------------
@@ -29,13 +31,13 @@ scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
 
 
   # Data to sankey plot
-  nodes <- unique(unlist(sapply(data, unique)))
+  tmp <- as.vector(sapply(data, unique))
+  nodes <- (unique(unlist(tmp)))
   links <- data.frame(
     source = match(link_data$source, nodes) - 1,
     target = match(link_data$target, nodes) - 1,
     value = link_data$value
   )
-
 
 
   # Sankey Plot -----------------------------------------------------
@@ -56,5 +58,6 @@ scPlot_sankey <- function(SeuObj, steps, output_path=NULL) {
              file = paste0(output_path,"sankey_plot_", paste(colnames(data), collapse = "_"), ".html"))
   if (file.exists(paste0(output_path,"/foldr2remove"))) {unlink(paste0(output_path,"/foldr2remove"), recursive=TRUE)}
 }
+
 
 
