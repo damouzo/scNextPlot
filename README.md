@@ -10,3 +10,8 @@ To install the GitHub package, you may find the following useful:
 
     library(devtools)
     install_github("damouzo/scNextPlot")
+
+
+## What you'll find here
+
+![My Image](plots/Sankey.JPG)
