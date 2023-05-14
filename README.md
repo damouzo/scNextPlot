@@ -13,5 +13,19 @@ To install the GitHub package, you may find the following useful:
 
 
 ## What you'll find here
+# TreeDot for multiple GSEAs
+![My Image](plots/TreeDot.JPG)
 
+# Proportions Analysis for Seurat Object 
+![My Image](plots/Proportions.JPG)
+
+# Interactive Table for CellRanger Summary
+![My Image](plots/SummaryCellRanger.JPG)
+
+# Sankey Plot for Seurat Object
 ![My Image](plots/Sankey.JPG)
+
+# Resolusion Check for Seurat Object
+![My Image](plots/allres.JPG)
+
+
