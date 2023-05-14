@@ -15,7 +15,7 @@ To install the GitHub package, you may find the following useful:
 
 ### TreeDot for multiple GSEAs
 
-![My Image](plots/TreeDot2.JPG)
+![My Image](plots/TreeDot.JPG)
 
 ### Proportions Analysis for Seurat Object
 
@@ -31,4 +31,4 @@ To install the GitHub package, you may find the following useful:
 
 ### Resolusion Check for Seurat Object
 
-![My Image](plots/allres2.JPG)
+![My Image](plots/allres.JPG)
