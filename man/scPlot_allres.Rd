@@ -62,7 +62,7 @@ Seurat_Object <- FindNeighbors(Seurat_Object, dims = 1:30, verbose = F)
 
   # Plot selected resolution test
 pdf("AllRes.pdf", width=10, height=10)
-scPlot_AllRes(integrated_sct, res=c(0,0.5,0.6,0.7,1),
+scPlot_allres(integrated_sct, res=c(0,0.5,0.6,0.7,1), reduction="umap",
               clustree = T,UMAPs=T, clustreeGenes = c("LYZ"))
 dev.off()
 
