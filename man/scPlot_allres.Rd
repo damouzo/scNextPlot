@@ -27,8 +27,8 @@ Vector of genes to check the expression in the Clustertree. [Default:NULL]
  \item{reduction}{
 Seleccion of the reduction for the DimPlot. [Default:"umap"]
 }
- \item{wknnGraph}{
-True for multiome findcluster with wknn graph. [Default:FALSE]
+ \item{Graph}{
+Custom name of the graph made by FindNeighbors. [Default:NULL]
 }
 }
 \details{
