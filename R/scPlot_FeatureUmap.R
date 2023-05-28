@@ -32,6 +32,10 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
     plot.df <- gather(tmp.df, name, val, 1:length(features), factor_key = TRUE)
 
   } else if (feature.type == "gene") {
+    featuresNotFound <- features[!features %in% rownames(obj)]
+    if (length(featuresNotFound) != 0) {print(paste0("Gene(s) ",featuresNotFound,
+                                                     " not found in Seurat Object" ))}
+    features <- features[features %in% rownames(obj)]
     feature.info <- as.matrix(GetAssayData(object = obj, slot = "data")[features,])
     if (length(features) == 1) {
       colnames(feature.info) <- features
@@ -55,7 +59,7 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
         theme(aspect.ratio = 1) +
         scale_color_gradientn(colors = colors, limits = c(feature_lower, feature_upper),
                               na.value = na.color) +
-        scale_alpha_continuous(range = c(0.1, 1), guide = "none") +
+        scale_alpha_continuous(range = c(0.6, 1), guide = "none") +
         labs(color = features[i]) +
         theme(
           aspect.ratio = 1,
@@ -82,9 +86,10 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
     }
 
     p <- ggplot(plot.df, aes(x = UMAP_1, y = UMAP_2)) +
-      geom_point(aes(color = val), alpha = 0.8, shape = 19, size = pt.size) +
+      geom_point(aes(color = val,alpha = val), shape = 19, size = pt.size) +
       theme(aspect.ratio = 1) +
       scale_color_gradientn(colors = colors, limits = c(lower, upper), na.value = na.color) +
+      scale_alpha_continuous(range = c(0.6, 1), guide = "none") +
       labs(color = title) +
       facet_wrap(~name, ncol = ncols) +
       theme(
@@ -95,7 +100,7 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
         strip.text = element_text(size = 10),
         panel.background = element_blank(),
         plot.background = element_blank(),
-        axis.line = element_line(size = 0.5)
+        axis.line = element_line(linewidth = 0.5)
       )
 
     return(p)
