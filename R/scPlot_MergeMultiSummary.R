@@ -33,7 +33,29 @@ scPlot_MergeMultiSummary = function (xlsx2merge,output_path=NULL,
   # Create beatufil table -----------------------------------------
   if (save_html) {
     df_all_plot <- full_data %>%
-      mutate(Ncell_estim_cols = case_when(Estimated.number.of.cells <= 11000 ~ "darkgreen", TRUE ~ "red"))
+      mutate(Ncell_estim_cols = case_when(
+        Estimated.number.of.cells <= 12000 & Estimated.number.of.cells >= 500 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(Feat_linkages_cols = case_when(Feature.linkages.detected >= 100 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_ValidBar_cols = case_when(ATAC.Valid.barcodes.percent >= 85 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Frac_genome_cols = case_when(ATAC.Fraction.of.genome.in.peaks.percent <= 75 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_TSS_cols = case_when(ATAC.TSS.enrichment.score >= 5 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Frac_over_peak_cols = case_when(ATAC.Fraction.of.high.quality.fragments.overlapping.peaks.percent >= 25 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Mean_reads = case_when(ATAC.Mean.raw.read.pairs.per.cell >= 5000 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Frac_cells_cols = case_when(ATAC.Fraction.of.high.quality.fragments.in.cells.percent >= 40 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Frac_peakscells_cols = case_when(ATAC.Fraction.of.transposition.events.in.peaks.in.cells.percent >= 25 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Median_frag_cols = case_when(ATAC.Median.high.quality.fragments.per.cell >= 100 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_Conf_Map_cols = case_when(ATAC.Confidently.mapped.read.pairs.percent >= 80 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(ATAC_NonNuclear_cols = case_when(ATAC.Non.nuclear.read.pairs.percent <= 10 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_ValidBar_cols = case_when(GEX.Valid.barcodes.percent >= 80 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_TSO_cols = case_when(GEX.Reads.with.TSO.percent <= 25 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Read_Map_Genome_cols = case_when(GEX.Reads.mapped.to.genome.percent >= 80 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Read_Intergenic_cols = case_when(GEX.Reads.mapped.confidently.to.intergenic.regions.percent <= 30 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Read_Transcriptome_cols = case_when(GEX.Reads.mapped.confidently.to.transcriptome.percent >= 50 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Read_Antisense_cols = case_when(GEX.Reads.mapped.antisense.to.gene.percent <= 30 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Mean_reads_cols = case_when(GEX.Mean.raw.reads.per.cell >= 5000 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Frac_Trans_cells_cols = case_when(GEX.Fraction.of.transcriptomic.reads.in.cells.percent >= 60 ~ "darkgreen", TRUE ~ "red"))%>%
+      mutate(GEX_Median_UMI_cols = case_when(GEX.Median.UMI.counts.per.cell >= 100 ~ "darkgreen", TRUE ~ "red"))
+
 
     colnames(df_all_plot) <- gsub("\\.", " ", colnames(df_all_plot))
     colnames(df_all_plot) <- gsub("_", " ", colnames(df_all_plot))
@@ -58,10 +80,53 @@ scPlot_MergeMultiSummary = function (xlsx2merge,output_path=NULL,
 
                   # Add color levels
                   "Estimated number of cells" = colDef(cell= data_bars(., text_position="above", text_color_ref="Ncell estim cols")),
+                  "Feature linkages detected" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "Feat linkages cols")),
+                  "ATAC Valid barcodes percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC ValidBar cols")),
+                  "ATAC Fraction of genome in peaks percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Frac genome cols")),
+                  "ATAC TSS enrichment score" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC TSS cols")),
+                  "ATAC Fraction of high-quality fragments overlapping peaks percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Frac over peak cols")),
+                  "ATAC Mean raw read pairs per cell" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Mean reads")),
+                  "ATAC Fraction of high-quality fragments in cells percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Frac cells cols")),
+                  "ATAC Fraction of transposition events in peaks in cells percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Frac peakscells cols")),
+                  "ATAC Median high-quality fragments per cell" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Median frag cols")),
+                  "ATAC Confidently mapped read pairs percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC Conf Map cols")),
+                  "ATAC Non-nuclear read pairs percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "ATAC NonNuclear cols")),
+                  "GEX Valid barcodes percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX ValidBar cols")),
+                  "GEX Reads with TSO percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX TSO cols")),
+                  "GEX Reads mapped to genome percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Read Map Genome cols")),
+                  "GEX Reads mapped confidently to intergenic regions percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Read Intergenic cols")),
+                  "GEX Reads mapped confidently to transcriptome percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Read Transcriptome cols")),
+                  "GEX Reads mapped antisense to gene percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Read Antisense cols")),
+                  "GEX Mean raw reads per cell" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Mean reads cols")),
+                  "GEX Fraction of transcriptomic reads in cells percent" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Frac Trans cells cols")),
+                  "GEX Median UMI counts per cell" = colDef(cell = data_bars(., text_position = "above", text_color_ref = "GEX Median UMI cols")),
+
+
 
                   # Remove for output
                   "Pipeline version" = colDef(show = FALSE),
-                  "Ncell estim cols" = colDef(show = FALSE)
+                  "Ncell estim cols" = colDef(show = FALSE),
+                  "Feat linkages cols" = colDef(show = FALSE),
+                  "ATAC ValidBar cols" = colDef(show = FALSE),
+                  "ATAC Frac genome cols" = colDef(show = FALSE),
+                  "ATAC TSS cols" = colDef(show = FALSE),
+                  "ATAC Frac over peak cols" = colDef(show = FALSE),
+                  "ATAC Mean reads" = colDef(show = FALSE),
+                  "ATAC Frac cells cols" = colDef(show = FALSE),
+                  "ATAC Frac peakscells cols" = colDef(show = FALSE),
+                  "ATAC Median frag cols" = colDef(show = FALSE),
+                  "ATAC Conf Map cols" = colDef(show = FALSE),
+                  "ATAC NonNuclear cols" = colDef(show = FALSE),
+                  "GEX ValidBar cols" = colDef(show = FALSE),
+                  "GEX TSO cols" = colDef(show = FALSE),
+                  "GEX Read Map Genome cols" = colDef(show = FALSE),
+                  "GEX Read Intergenic cols" = colDef(show = FALSE),
+                  "GEX Read Transcriptome cols" = colDef(show = FALSE),
+                  "GEX Read Antisense cols" = colDef(show = FALSE),
+                  "GEX Mean reads cols" = colDef(show = FALSE),
+                  "GEX Frac Trans cells cols" = colDef(show = FALSE),
+                  "GEX Median UMI cols" = colDef(show = FALSE)
+
                 )
       )
   }
