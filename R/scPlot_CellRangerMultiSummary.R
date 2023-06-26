@@ -37,7 +37,7 @@ scPlot_CellRangerMultiSummary = function (base_path, secondary_path = "outs/",
     else {
       file_path <- file.path(base_path, lib_list[x], secondary_path)
     }
-    raw_data <- read.csv(file = paste0(file_path, "summary.csv"),
+    raw_data <- read.csv(file = paste0(file_path, file_name),
                          stringsAsFactors = F)
     column_numbers <- grep(pattern = ",", x = raw_data[1,
     ])
