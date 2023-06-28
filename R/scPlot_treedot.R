@@ -177,7 +177,7 @@ scPlot_treedot <- function(comp_pair_term, top_paths=5, clust_num=3,ORA_type="GO
   combine_plot <- plot_grid(ggtree_plot_noLegend,NULL, dotplot_noLegend, nrow= 1, rel_widths= c(0.3,-0.05,2), align = 'h')
   combine_legend <- plot_grid(legend_dot,NULL,legend_tree, ncol=1, rel_heights = c(1,-0.5,1))
   big_plot <- plot_grid(combine_plot,combine_legend,NULL, nrow = 1,
-                        rel_widths = c(1,0.1, keywords_max_length*0.0053))
+                        rel_widths = c(1,0.1, keywords_max_length*0.006))
   return(big_plot)
 }
 
