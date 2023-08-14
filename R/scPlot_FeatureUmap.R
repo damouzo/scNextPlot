@@ -60,7 +60,7 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
         scale_color_gradientn(colors = colors, limits = c(feature_lower, feature_upper),
                               na.value = na.color) +
         scale_alpha_continuous(range = c(0.6, 1), guide = "none") +
-        labs(color = features[i]) +
+        labs(color = features[i], title = title) +
         theme(
           aspect.ratio = 1,
           text = element_text(size = 10),
@@ -90,7 +90,7 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
       theme(aspect.ratio = 1) +
       scale_color_gradientn(colors = colors, limits = c(lower, upper), na.value = na.color) +
       scale_alpha_continuous(range = c(0.6, 1), guide = "none") +
-      labs(color = title) +
+      labs(color = title, title = title) +
       facet_wrap(~name, ncol = ncols) +
       theme(
         aspect.ratio = 1,
