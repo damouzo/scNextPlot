@@ -15,7 +15,7 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
               jdb_palette("samba_color"),jdb_palette("wolfgang_basic"))
 
   # Default assays
-  DefaultAssay(Seu_obj) <- "RNA"
+  assay <- DefaultAssay(Seu_obj)
 
   # Clean Res and Compute FindCluster for selected resolutions ------------------
   Seu_obj@meta.data <- Seu_obj@meta.data %>% dplyr::select(-contains("res"))
@@ -57,7 +57,8 @@ scPlot_allres <- function(Seu_obj,res=c(0,0.1,0.3,0.5,0.7,0.9, 1),
     names(plots_cgenes) <- clustreeGenes
 
     #Get Gene Info and add to metadata
-    genes_res<- t(as.data.frame(Seu_obj@assays$RNA@data[rownames(Seu_obj@assays$RNA@data) %in% clustreeGenes , , drop=F]))
+    genes_res<- t(as.data.frame(Seu_obj@assays[[assay]]@data[rownames(Seu_obj@assays[[assay]]@data) %in% clustreeGenes , , drop=F]))
+    #genes_res<- t(as.data.frame(Seu_obj@assays$RNA@data[rownames(Seu_obj@assays$RNA@data) %in% clustreeGenes , , drop=F]))
     Seu_obj@meta.data <- merge(Seu_obj@meta.data,genes_res,by='row.names')
 
     for (cgene in colnames(genes_res)) {
