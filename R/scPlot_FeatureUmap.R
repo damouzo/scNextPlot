@@ -3,7 +3,7 @@
 # Check Expression of Marker genes of SeuObj  ----------------------------------
 scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type = "meta", umap = "umap",
                               ncols = ceiling(sqrt(length(features))), pt.size = 1, same.scale = FALSE, title = "GEX",
-                              lower = NULL, upper = NULL, na.color = "gray") {
+                              lower = NULL, upper = NULL, na.color = "gray", order=TRUE) {
 
   # load required libraries-----------------------------------------------------
   library(reshape2)
@@ -51,6 +51,7 @@ scPlot_FeatureUmap <- function(obj = countData, features = "nGene", feature.type
 
     for (i in 1:length(features)) {
       feature_data <- plot.df[plot.df$name == features[i], ]
+      if (order) {feature_data <- feature_data[order(feature_data$val), ]}
       feature_lower <- min(feature_data$val)
       feature_upper <- max(feature_data$val)
 
