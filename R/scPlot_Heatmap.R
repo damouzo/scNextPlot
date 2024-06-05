@@ -1,5 +1,4 @@
 
-
 # Check Expression of Marker genes of SeuObj  ----------------------------------
 scPlot_Heatmap <- function(SeuObj,
                            markers = NULL,
@@ -13,11 +12,12 @@ scPlot_Heatmap <- function(SeuObj,
                            hm_limit = NULL, #c(-2, 0, 2)
                            hm_colors = c("#4575b4","white","#d73027"),
                            cluster_rows = FALSE,
-                           cluster_columns = FALSE,
+                           cluster_columns = TRUE,
                            show_column_names = FALSE,
                            show_row_names = TRUE,
                            row_names_side = "left",
-                           show_column_dend = TRUE,
+                           show_column_dend = FALSE,
+                           show_row_dend = FALSE,
                            row_font_size = 12
                            ) {
 
@@ -36,7 +36,7 @@ scPlot_Heatmap <- function(SeuObj,
 
   # Prepare Genes & Matrix -----------------------------------------------------
   # Gene set
-    if (is.null(markers)) {
+  if (is.null(markers)) {
     markers <- SeuObj@assays[[assay]]@var.features
   }
 
@@ -49,21 +49,11 @@ scPlot_Heatmap <- function(SeuObj,
   mat <- as.matrix(GetAssayData(SeuObj, assay = assay, slot = slot)[markers, ])
   if (need_scale == T) {mat <- t(scale(t(mat)))}
 
+  # Extract Annot Variables
+  anno <- SeuObj@meta.data[, anno_var]
 
 
-
-  # Manual sorting optional with sort_var --------------------------------------
-  if (is.null(sort_var)) {
-  anno <- SeuObj@meta.data %>%
-      rownames_to_column(var = "barcode")
-  } else {
-    anno <- SeuObj@meta.data %>%
-      rownames_to_column(var = "barcode") %>%
-      arrange(!!!syms(sort_var))
-
-  }
-
-  # Work With Colors -----------------------------------------------------------
+  #Work With Colors -----------------------------------------------------------
   #needed function
   are_colors <- function(x) {
     sapply(x, function(X) {
@@ -136,25 +126,56 @@ scPlot_Heatmap <- function(SeuObj,
 
   col_fun = circlize::colorRamp2(hm_limit, hm_colors)
 
-  # Create Heatmap per se ------------------------------------------------------
-  ht <- Heatmap(as.matrix(mat),
-                cluster_rows = cluster_rows,
-                cluster_columns = cluster_columns,
-                heatmap_legend_param = list(direction = "horizontal",
-                                            legend_width = unit(6, "cm"),
-                                            title = "Expression"),
-                col = col_fun,
-                show_column_names = show_column_names,
-                show_row_names = show_row_names,
-                row_names_side = row_names_side,
-                show_column_dend = show_column_dend,
-                row_names_gp = gpar(fontsize = row_font_size),
-                top_annotation = annos)
+  # split and order
+  if (!is.null(sort_var)) {
+    factor_levels <-as.data.frame(as.matrix(table(anno[[sort_var]])))
+    factor_levels <- row.names(factor_levels[order(-factor_levels$V1), , drop = FALSE])
+    colum_split <- factor(anno[[sort_var]], levels = factor_levels)
+    # HeatMap with order by var
+    ht <- Heatmap(mat, column_split = colum_split,
+                                column_title  = NULL,
+                                cluster_rows = cluster_rows,
+                                cluster_columns = cluster_columns,
+                                heatmap_legend_param = list(direction = "horizontal",
+                                                            legend_width = unit(6, "cm"),
+                                                            title = "Expression"),
+                                col = col_fun,
+                                show_column_names = show_column_names,
+                                show_row_names = show_row_names,
+                                row_names_side = row_names_side,
+                                show_column_dend = show_column_dend,
+                                show_row_dend = show_row_dend,
+                                row_names_gp = gpar(fontsize = row_font_size),
+                                use_raster = T,raster_quality = 4,
+                                top_annotation = annos)
+  } else {
+    # HeatMap withOUT order by var
+    ht <- Heatmap(mat,
+                  cluster_rows = cluster_rows,
+                  cluster_columns = cluster_columns,
+                  heatmap_legend_param = list(direction = "horizontal",
+                                              legend_width = unit(6, "cm"),
+                                              title = "Expression"),
+                  col = col_fun,
+                  show_column_names = show_column_names,
+                  show_row_names = show_row_names,
+                  row_names_side = row_names_side,
+                  show_column_dend = show_column_dend,
+                  row_names_gp = gpar(fontsize = row_font_size),
+                  use_raster = T,raster_quality = 4,
+                  top_annotation = annos)
+  }
 
   draw(ht,
        heatmap_legend_side = "bottom",
        annotation_legend_side = "right")
+
 }
+
+
+
+
+
 
 
 
