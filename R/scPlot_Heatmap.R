@@ -1,17 +1,19 @@
 
+
 # Check Expression of Marker genes of SeuObj  ----------------------------------
 scPlot_Heatmap <- function(SeuObj,
                            markers = NULL,
                            assay = DefaultAssay(SeuObj),
-                           slot = "scale.data",
+                           slot = "scaled.data",
+                           need_scale = FALSE,
                            sort_var = NULL,
                            n = 8,
                            anno_var,
                            anno_colors,
-                           hm_limit = c(-2, 0, 2),
+                           hm_limit = NULL, #c(-2, 0, 2)
                            hm_colors = c("#4575b4","white","#d73027"),
                            cluster_rows = FALSE,
-                           cluster_columns = TRUE,
+                           cluster_columns = FALSE,
                            show_column_names = FALSE,
                            show_row_names = TRUE,
                            row_names_side = "left",
@@ -32,22 +34,26 @@ scPlot_Heatmap <- function(SeuObj,
   library(scales)
   library(RColorBrewer)
 
-  # Prepare Matrix ------------------------------------------------------------
-  mat <- GetAssayData(object = SeuObj, assay = assay, layer = slot)
+  # Prepare Genes & Matrix -----------------------------------------------------
+  # Gene set
+    if (is.null(markers)) {
+    markers <- SeuObj@assays[[assay]]@var.features
+  }
 
   if (is.data.frame(markers)) {genes <- get_top_genes(SeuObj, markers, n)
   } else if (is.character(markers)) {genes <- markers
   } else {stop('Incorrect input of markers')}
 
+  # Matrix
 
-  mat <- mat[match(genes, rownames(mat)),]
+  mat <- as.matrix(GetAssayData(SeuObj, assay = assay, slot = slot)[markers, ])
+  if (need_scale == T) {mat <- t(scale(t(mat)))}
 
-  # if (is.null(markers)) {
-  #   markers <- SeuObj@assays[[assay]]@var.features
-  # }
+
+
 
   # Manual sorting optional with sort_var --------------------------------------
-  if (!is.null(sort_var)) {
+  if (is.null(sort_var)) {
   anno <- SeuObj@meta.data %>%
       rownames_to_column(var = "barcode")
   } else {
@@ -55,13 +61,9 @@ scPlot_Heatmap <- function(SeuObj,
       rownames_to_column(var = "barcode") %>%
       arrange(!!!syms(sort_var))
 
-    mat <- t(mat)
-    mat <- mat[match(anno$barcode, rownames(mat)),]
-    mat <- t(mat)
   }
 
   # Work With Colors -----------------------------------------------------------
-
   #needed function
   are_colors <- function(x) {
     sapply(x, function(X) {
@@ -86,8 +88,7 @@ scPlot_Heatmap <- function(SeuObj,
 
       } else if (length(anno_colors[[i]]) == 3 & all(are_colors(anno_colors[[i]]))) {
 
-        col_fun <- colorRamp2(c(min(value), stats::median(value), max(value)),
-                              anno_colors[[i]])
+        col_fun <- colorRamp2(c(min(value), stats::median(value), max(value)), anno_colors[[i]])
       } else {
         stop(err_msg)
       }
@@ -125,6 +126,16 @@ scPlot_Heatmap <- function(SeuObj,
   annos <- do.call(c, annos)
   annos@gap <- rep(unit(1,"mm"), length(annos))
   ht_opt$message = FALSE
+
+  # hm_limit
+  if (is.null(hm_limit)) {
+    hm_limit <- c(plyr::round_any(quantile(mat, c(0.1, 0.95))[[1]], 0.5, f=floor),
+                  0,
+                  plyr::round_any(quantile(mat, c(0.1, 0.95))[[2]], 0.5, f=ceiling))
+  }
+
+  col_fun = circlize::colorRamp2(hm_limit, hm_colors)
+
   # Create Heatmap per se ------------------------------------------------------
   ht <- Heatmap(as.matrix(mat),
                 cluster_rows = cluster_rows,
@@ -132,7 +143,7 @@ scPlot_Heatmap <- function(SeuObj,
                 heatmap_legend_param = list(direction = "horizontal",
                                             legend_width = unit(6, "cm"),
                                             title = "Expression"),
-                col = colorRamp2(hm_limit, hm_colors),
+                col = col_fun,
                 show_column_names = show_column_names,
                 show_row_names = show_row_names,
                 row_names_side = row_names_side,
@@ -144,4 +155,9 @@ scPlot_Heatmap <- function(SeuObj,
        heatmap_legend_side = "bottom",
        annotation_legend_side = "right")
 }
+
+
+
+
+
 
