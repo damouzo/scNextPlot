@@ -1,4 +1,5 @@
 
+
 # Check Expression of Marker genes of SeuObj  ----------------------------------
 scPlot_Heatmap <- function(SeuObj,
                            markers = NULL,
@@ -171,9 +172,6 @@ scPlot_Heatmap <- function(SeuObj,
        annotation_legend_side = "right")
 
 }
-
-
-
 
 
 
