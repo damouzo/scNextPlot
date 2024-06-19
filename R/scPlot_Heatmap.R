@@ -1,4 +1,5 @@
 
+
 # Check Expression of Marker genes of SeuObj  ----------------------------------
 scPlot_Heatmap <- function(SeuObj,
                            markers = NULL,
@@ -11,6 +12,8 @@ scPlot_Heatmap <- function(SeuObj,
                            anno_colors,
                            row_col_var_df = NULL,
                            row_col_var_plot = NULL,
+                           row_text_vector = NULL,
+                           row_text_col = NULL,
                            hm_limit = NULL, #c(-2, 0, 2)
                            hm_colors = c("#4575b4","white","#d73027"),
                            hm_scale_name = "Expression",
@@ -175,6 +178,23 @@ scPlot_Heatmap <- function(SeuObj,
   }
 
 
+  # rownames size and with color --------------------------------------------------------
+  if (!is.null(row_text_vector)) {
+    if (is.null(row_text_col)) {row_text_col <- "red"}
+
+
+    row_font_color <- ifelse(rownames(mat) %in% row_text_vector, row_text_col, "black")
+    row_names_gp <- gpar(fontsize = row_font_size,  col = row_font_color)
+
+  } else {
+    row_names_gp = gpar(fontsize = row_font_size)
+  }
+
+
+
+
+
+
   # HEATMAPS ###################################################################
   # split and order
   if (!is.null(sort_var)) {
@@ -196,7 +216,7 @@ scPlot_Heatmap <- function(SeuObj,
                                 row_names_side = row_names_side,
                                 show_column_dend = show_column_dend,
                                 show_row_dend = show_row_dend,
-                                row_names_gp = gpar(fontsize = row_font_size),
+                                row_names_gp = row_names_gp,
                                 use_raster = T,raster_quality = 4,
                                 top_annotation = annos)
   } else {
@@ -213,7 +233,7 @@ scPlot_Heatmap <- function(SeuObj,
                   left_annotation=left_annotation,
                   row_names_side = row_names_side,
                   show_column_dend = show_column_dend,
-                  row_names_gp = gpar(fontsize = row_font_size),
+                  row_names_gp = row_names_gp,
                   use_raster = T,raster_quality = 4,
                   top_annotation = annos)
   }
@@ -221,6 +241,7 @@ scPlot_Heatmap <- function(SeuObj,
   draw(ht, heatmap_legend_side="bottom", annotation_legend_side="right",legend_grouping="original")
 
 }
+
 
 
 
