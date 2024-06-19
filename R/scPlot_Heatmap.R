@@ -10,6 +10,8 @@ scPlot_Heatmap <- function(SeuObj,
                            n = 8,
                            anno_var,
                            anno_colors,
+                           row_col_var_df = NULL,
+                           row_col_var_plot = NULL,
                            hm_limit = NULL, #c(-2, 0, 2)
                            hm_colors = c("#4575b4","white","#d73027"),
                            cluster_rows = FALSE,
@@ -63,7 +65,7 @@ scPlot_Heatmap <- function(SeuObj,
     })
   }
 
-  # Set Colors for variables side
+  # Set Colors for variables Top  ----------------------------------------------
   annos <- list()
   for (i in seq_along(1:length(anno_var))) {
     err_msg <- paste('Incorrect specification for annotation colors for', anno_var[i])
@@ -113,12 +115,12 @@ scPlot_Heatmap <- function(SeuObj,
     annos[[i]] <- ha
   }
 
-  # Build annos sum up for all side colors
+  # Build annos sum up for all side colors -------------------------------------
   annos <- do.call(c, annos)
   annos@gap <- rep(unit(1,"mm"), length(annos))
   ht_opt$message = FALSE
 
-  # hm_limit
+  # hm_limit ------------------------------------------------------------------
   if (is.null(hm_limit)) {
     hm_limit <- c(plyr::round_any(quantile(mat, c(0.1, 0.95))[[1]], 0.5, f=floor),
                   0,
@@ -127,6 +129,53 @@ scPlot_Heatmap <- function(SeuObj,
 
   col_fun = circlize::colorRamp2(hm_limit, hm_colors)
 
+  # Set row annot Colors for variables ----------------------------------------
+  if(!is.null(row_col_var_df)){
+    # obtain only column for plots
+    row_col_var_df <- row_col_var_df %>% dplyr::select(all_of(row_col_var_plot))
+
+    # Set colors function
+    generate_color_palette <- function(df) {
+      color_palettes <- list()
+
+      # Our paletes for row_cols
+      numeric_gradients <- list(c("white", "orange"), c("white", "purple"),
+                    c("white", "blue"), c("white", "green"), c("white", "red"))
+      categorical_palettes <- list("Set3","Accent","Paired", "Dark2", "Set2")
+      numeric_gradient_index <- 1
+      categorical_palette_index <- 1
+
+
+      for (column_name in colnames(df)) {
+        unique_items <- unique(df[[column_name]])
+        num_unique_items <- length(unique_items)
+
+        if (is.numeric(df[[column_name]])) {# Paleta continua para variables numéricas
+          col_func <- colorRamp2(c(min(df[[column_name]], na.rm = TRUE),
+                                   max(df[[column_name]], na.rm = TRUE)),
+                                 numeric_gradients[[numeric_gradient_index]])
+          color_palettes[[column_name]] <- col_func
+          numeric_gradient_index <- numeric_gradient_index %% length(numeric_gradients) + 1
+
+        } else { # Paleta discreta para variables categóricas
+          pal <- brewer.pal(min(num_unique_items, 9), categorical_palettes[[categorical_palette_index]])
+          color_palettes[[column_name]] <- setNames(pal[1:num_unique_items], unique_items)
+          categorical_palette_index <- categorical_palette_index %% length(categorical_palettes) + 1
+
+        }
+      }
+
+      return(color_palettes)
+    }
+    row_col_pal <- generate_color_palette(row_col_var_df)
+
+    left_annotation <- rowAnnotation(df = row_col_var_df, col = row_col_pal)
+  } else {
+    left_annotation <- NULL
+  }
+
+
+  # HEATMAPS ###################################################################
   # split and order
   if (!is.null(sort_var)) {
     factor_levels <-as.data.frame(as.matrix(table(anno[[sort_var]])))
@@ -142,6 +191,7 @@ scPlot_Heatmap <- function(SeuObj,
                                                             title = "Expression"),
                                 col = col_fun,
                                 show_column_names = show_column_names,
+                                left_annotation=left_annotation,
                                 show_row_names = show_row_names,
                                 row_names_side = row_names_side,
                                 show_column_dend = show_column_dend,
@@ -160,6 +210,7 @@ scPlot_Heatmap <- function(SeuObj,
                   col = col_fun,
                   show_column_names = show_column_names,
                   show_row_names = show_row_names,
+                  left_annotation=left_annotation,
                   row_names_side = row_names_side,
                   show_column_dend = show_column_dend,
                   row_names_gp = gpar(fontsize = row_font_size),
@@ -167,15 +218,9 @@ scPlot_Heatmap <- function(SeuObj,
                   top_annotation = annos)
   }
 
-  draw(ht,
-       heatmap_legend_side = "bottom",
-       annotation_legend_side = "right")
+  draw(ht, heatmap_legend_side="bottom", annotation_legend_side="right",legend_grouping="original")
 
 }
-
-
-
-
 
 
 
