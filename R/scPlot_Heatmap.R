@@ -161,7 +161,18 @@ scPlot_Heatmap <- function(SeuObj,
           numeric_gradient_index <- numeric_gradient_index %% length(numeric_gradients) + 1
 
         } else { # Paleta discreta para variables categóricas
-          pal <- brewer.pal(min(num_unique_items, 9), categorical_palettes[[categorical_palette_index]])
+          #pal <- brewer.pal(min(num_unique_items, 9), categorical_palettes[[categorical_palette_index]])
+          base_palette <- brewer.pal(min(num_unique_items, 9), categorical_palettes[[categorical_palette_index]])
+          num_colors_needed <- num_unique_items
+
+          # Check if additional colors are needed
+          if (num_colors_needed > length(base_palette)) {
+            pi_yg_palette <- brewer.pal(11, "PiYG")
+            additional_colors <- pi_yg_palette[1:(num_colors_needed - length(base_palette))]
+            all_colors <- c(base_palette, additional_colors)
+          } else {
+            all_colors <- base_palette
+          }
           color_palettes[[column_name]] <- setNames(pal[1:num_unique_items], unique_items)
           categorical_palette_index <- categorical_palette_index %% length(categorical_palettes) + 1
 
