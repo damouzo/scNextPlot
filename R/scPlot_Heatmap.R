@@ -39,6 +39,7 @@ scPlot_Heatmap <- function(SeuObj,
   library(circlize)
   library(scales)
   library(RColorBrewer)
+  library(paletteer)
 
   # Prepare Genes & Matrix -----------------------------------------------------
   # Gene set
@@ -162,7 +163,7 @@ scPlot_Heatmap <- function(SeuObj,
 
         } else { # Paleta discreta para variables categóricas
           pal <- brewer.pal(min(num_unique_items, 9), categorical_palettes[[categorical_palette_index]])
-          if (length(pal) < num_unique_items){pal <- c(pal,  brewer.pal(11, "PiYG"))}
+          if (length(pal) < num_unique_items){pal <- c(pal,  paletteer_d("ggsci::default_igv") )}
           color_palettes[[column_name]] <- setNames(pal[1:num_unique_items], unique_items)
           color_palettes <- lapply(color_palettes, function(x) {x[!is.na(names(x)) & !is.na(x)]  })
 
